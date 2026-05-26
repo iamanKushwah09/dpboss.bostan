@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Login - RATAN777</title>
+    <meta name="description" content="login and access play option for satta matka online and win big money, india's largest and trusted satta matka play application, Fastest withdrawal and full rate">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="icon" type="image/png" sizes="192x192"  href="assets/img/ic_launcher-playstore.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="assets/icons/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-title" content="Add to Home">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="OnlineMatkaPlay">
+
+<link rel="stylesheet" href="assets/css/style.css?v=2.4">
+<style>
+/* New Premium Design Tokens */
+:root {
+    --primary-blue: #0044bb;
+    --primary-gradient: linear-gradient(135deg, #0044bb, #0d6efd);
+    --accent-gold: #f39c12;
+    --accent-red: #e74c3c;
+    --accent-green: #2ecc71;
+    --card-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    --border-radius-lg: 16px;
+    --border-radius-xl: 24px;
+}
+
+/* Base Body Style */
+body {
+    background-color: #f6f9fc;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Utility Classes */
+.premium-shadow { box-shadow: var(--card-shadow); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+.rounded-xl { border-radius: var(--border-radius-xl); }
+.text-gradient { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* Sticky Bottom Nav Space */
+body.has-bottom-nav { padding-bottom: 75px; }
+
+/* Modal Improvements */
+.modal-content { border: none; border-radius: var(--border-radius-lg); overflow: hidden; }
+
+ #loading-bg {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background-color: rgba(0, 0, 0, 0.4);
+          z-index: 500;
+        }
+        
+        #loading-image {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          margin: -75px;
+          z-index: 510;
+        }
+        
+        .lds-ripple {
+display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+
+.addFundamtbox {
+  text-align: center;
+  margin: 0px;
+  border: 1px solid beige;
+  display: block;
+  padding: 5px 5px;
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+}
+.addFundamtbox p {
+margin: 0px;
+  font-weight: 400;
+}
+
+
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid #000;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  4.9% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  5% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
+}
+
+.wts-flt-btn {
+    position: fixed;
+    right: 10px;
+    bottom: 100px;
+    display: block;
+}
+
+.wts-flt-btn a {
+    font-size: 25px;
+    background: green;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 44px;
+}
+
+.wts-flt-btn a {
+  font-size: 25px;
+  background: green;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 50%; /* Make it a perfect circle */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 44px; /* Set the width to the desired size */
+  height: 44px; /* Set the height to the desired size */
+  text-decoration: none; /* Remove underlines */
+}
+
+.wts-flt-btn a:hover {
+  background: darkgreen; /* Change color on hover */
+}
+
+.hometext p{
+padding-bottom: 10px;
+line-height: 14px;
+font-size: 10px;
+text-align: justify;
+}
+
+
+.table-responsive{
+overflow: auto;
+}
+.starline-chart-table{
+	width: 100%;
+  text-align: center;
+  border: 1px solid gray;
+  border-collapse: collapse;
+  background: white;
+  font-size: 12px;
+}
+.starline-chart-table thead{
+background: var(--primary-light);
+  color: white;
+}
+
+.starline-chart-table td, .starline-chart-table td{
+border: 1px solid #515151;
+  padding: 0px 3px;
+}
+
+.starline-chart-table .f {
+  background: var(--primary-light);
+  color: white;
+}
+
+/* Fix for scrolling notice wrap on mobile */
+#scroll-text {
+  white-space: nowrap !important;
+  display: inline-block !important;
+}
+</style></head>
+
+<body>
+
+    <div class="wrapper">
+        
+        <!-- More Menu Modal -->
+<div class="modal fade" id="moreMenuModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-left" role="document">
+    <div class="modal-content premium-menu-content">
+      
+      <!-- Premium Header -->
+      <div class="premium-menu-header">
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="position: absolute; right: 15px; top: 15px; text-shadow: none; opacity: 0.9;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="user-info-wrapper">
+            <div class="user-avatar text-white">
+                <i class="fa fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                                <h5 class="text-white" style="font-weight: 700; font-size: 18px; margin-bottom: 2px; margin-top: 1px;">Welcome Guest</h5>
+                <small style="color: rgba(255,255,255,0.85); font-weight: 500; font-size: 13px; line-height: 1;">Please login</small>
+                            </div>
+        </div>
+      </div>
+
+      <!-- Menu List -->
+      <div class="modal-body p-0">
+        <div class="premium-menu-list">
+                        <a href="notifications.php.html" class="premium-menu-item "><i class="fa fa-bell"></i> <span>Notifications</span></a>
+            <a href="top-winner-list.php.html" class="premium-menu-item "><i class="fa fa-trophy"></i> <span>Top Winners</span></a>
+            <a href="top-winner-list-starline.php.html" class="premium-menu-item "><i class="fa fa-trophy"></i> <span>Starline Winners</span></a>
+            <a href="game-rates.php.html" class="premium-menu-item "><i class="fa fa-tasks"></i> <span>Game Rates</span></a>
+            <a href="support.php.html" class="premium-menu-item "><i class="fa fa-comments"></i> <span>Help</span></a>
+            <a href="download-application.php.html" class="premium-menu-item "><i class="fa fa-mobile-phone" style="font-size: 22px;"></i> <span>Download App</span></a>
+            
+                    </div>
+      </div>
+
+    </div>
+  </div>
+</div>        <div id="content">
+            <nav class="navbar top-app-bar" style="background: var(--primary-light); padding: 12px 15px; position: sticky; top: 0; z-index: 1040; box-shadow: 0 3px 15px rgba(0,0,0,0.08);">
+    <div class="container-fluid d-flex justify-content-between align-items-center" style="position: relative;">
+        
+        <!-- Left: App Brand -->
+        <div class="d-flex align-items-center" style="z-index: 2;">
+            <a href="https://ratan777.app/" class="app-brand" style="color: white; font-weight: 700; font-size: 21px; text-decoration: none; letter-spacing: 0.5px;">
+                RATAN777
+            </a>
+        </div>
+        
+        <!-- Right: Wallet / Login Block -->
+        <div class="d-flex align-items-center" style="z-index: 2;">
+                        <a href="login.php.html" class="btn" style="background: #ffffff; color: var(--primary-light); border-radius: 20px; padding: 6px 18px; font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <i class="fa fa-sign-in"></i> Login
+            </a>
+                    </div>
+    </div>
+</nav>            
+            
+            <div class="container" >  
+            <div class="premium-auth-card">
+                
+                <center><img src="assets/img/ic_launcher-playstore.png" style="min-height: 100px;height: 100px;margin: auto;margin-bottom: auto;border-radius: 10px;margin-bottom: 10px;" ></center>
+                
+                <div class="text-center tb-10">
+                    <h3>Welcome</h3>
+                    <span>Sign in to Continue</span>
+                </div>
+                 <form action="" method="POST">
+                  <div class="form-group">
+                    <label for="mobile">Mobile Number:</label>
+                    <input type="text" pattern="[0-9]*" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="form-control" name="mobile" maxlength="10" minlength="10" placeholder="Enter 10 Digit Phone Number" id="mobile" autocomplete="off" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="pwd">Password:</label>
+                    <input type="password" class="form-control" name="password" placeholder="Enter password" id="pwd" autocomplete="off" required>
+                  </div>
+                  <button type="submit" class="btn btn-theme btn-login" name="login">Submit</button>
+                  <input type="hidden" name="return_url" value="aHR0cDovL3JhdGFuNzc3LmFwcC9teS1oaXN0b3J5LnBocA==">
+                </form> 
+                
+                <div class="text-center tbmar-20">
+                    <p>Dont have an account?</p>
+                    <a href="register.php.html" class="btn btn-login">Create Account Now</a>
+                </div>
+
+            </div>
+            </div>
+            
+            
+        </div>
+    </div>
+    
+    
+
+
+<!-- ===== NEW BOTTOM NAV BAR ===== -->
+<nav class="bottom-nav-bar">
+    <a href="index.php.html" class="bnav-item ">
+        <i class="fa fa-home"></i>
+        <span>Home</span>
+    </a>
+    <a href="notifications.php.html" class="bnav-item ">
+        <i class="fa fa-envelope-o"></i>
+        <span>Notifications</span>
+    </a>
+    <!-- <a href="starline-play.php.html" class="bnav-item bnav-center">
+        <div class="bnav-fab">
+            <i class="fa fa-play"></i>
+        </div>
+        <span>Play</span>
+    </a> -->
+    <a href="my-history.php.html" class="bnav-item ">
+        <i class="fa fa-history"></i>
+        <span>History</span>
+    </a>
+    <a href="my-profile.php.html" class="bnav-item ">
+        <i class="fa fa-user"></i>
+        <span>Profile</span>
+    </a>
+</nav>
+<!-- ============================= -->
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="assets/js/jquery-3.3.1.slim.min.js"></script>
+    <!-- Popper.JS -->
+    <script src="assets/js/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="assets/js/bootstrap.min.js"></script>
+    
+    
+    <script type="text/javascript">
+    
+    
+    var grantotal = 0;
+    function resetjsvar(){
+        grantotal = 0;
+    }
+        $(document).ready(function () {
+			
+			$('.addFundamtbox').on('click', function () {
+                var addFund_amount = $(this).attr('data');
+                $('#add_fund_amount').val(addFund_amount);
+                
+            });
+			
+			
+           
+            $('.bidamtbox').on('click', function () {
+                var bid_amount = $(this).attr('data');
+                var bid_amount_id = $(this).attr('id');
+                $('.bidamtbox').removeClass("active");
+                $(this).addClass("active");
+                $('#selected_amount').val(bid_amount);
+                
+            });
+            
+            // Handling click on digit card
+            $('.premium-digit-card, .premium-panna-card').on('click', function (e) {
+                var $input = $(this).find('.pointinputbox');
+                var selected_amount = $('#selected_amount').val();
+                
+                if(selected_amount == ''){
+                    alert('Please Select Amount');
+                }else{
+                    var exist_amount = $input.val();
+                    
+                    if(exist_amount == ''){
+                        exist_amount=0;
+                    }
+                    var total = parseInt(exist_amount) + parseInt(selected_amount);
+                    $input.val(total);
+                    grantotal += parseInt(selected_amount);
+                    $('#total_point2').html(grantotal);
+                    $('#total_point').val(grantotal);
+                }
+            });
+            
+            
+            
+            
+            $('.pointinputbox').bind('copy paste cut',function(e) {
+              e.preventDefault();
+            });
+            
+            
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').addClass('active');
+                $('.overlay').addClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+            
+            $('#dismiss, .overlay').on('click', function () {
+                $('#sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            });
+            
+            
+        });
+        
+        
+               
+              
+              
+              
+       
+              
+              
+              
+       
+</script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"b94ecf8eda064d238d0af58c574c02a0","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+</html>
