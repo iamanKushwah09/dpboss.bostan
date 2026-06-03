@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: white; padding: 20px 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; height: 90vh; overflow-y: auto;}
+    h2 { text-align: center; color: #333; margin-top: 0;}
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px;}
+    input[type="text"], input[type="password"], input[type="file"], input[type="url"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #25D366; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #1ebe57; }
+    #adminPanel { display: none; }
+    .error { color: red; font-size: 14px; text-align: center; margin-bottom: 10px; display: none; }
+    .success { color: green; font-size: 14px; text-align: center; margin-bottom: 10px; display: none; }
+    .preview { max-width: 100px; margin-top: 10px; border-radius: 5px; display: none; border: 1px solid #ccc;}
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div class="card" id="loginPanel" style="height: auto;">
+    <h2>Admin Login</h2>
+    <div class="error" id="loginError">Invalid username or password!</div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter admin">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter 123456">
+    </div>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Admin Panel Section -->
+  <div class="card" id="adminPanel">
+    <h2>Dashboard</h2>
+    <div class="success" id="saveSuccess">Settings saved successfully! Go back to homepage to see changes.</div>
+    
+    <div class="form-group">
+      <label>WhatsApp Number</label>
+      <input type="text" id="waNum" placeholder="e.g., 918790023843">
+    </div>
+
+    <div class="form-group">
+      <label>Banner 1 (Upload or URL)</label>
+      <input type="file" id="banner1File" accept="image/*" onchange="previewImage(this, 'preview1')">
+      <div style="text-align: center; margin: 5px 0; font-size: 12px; color: #888;">OR</div>
+      <input type="url" id="banner1Url" placeholder="Paste Image URL..." oninput="updatePreviewUrl(this, 'preview1')">
+      <img id="preview1" class="preview">
+    </div>
+
+    <div class="form-group">
+      <label>Banner 2 (Upload or URL)</label>
+      <input type="file" id="banner2File" accept="image/*" onchange="previewImage(this, 'preview2')">
+      <div style="text-align: center; margin: 5px 0; font-size: 12px; color: #888;">OR</div>
+      <input type="url" id="banner2Url" placeholder="Paste Image URL..." oninput="updatePreviewUrl(this, 'preview2')">
+      <img id="preview2" class="preview">
+    </div>
+
+    <button onclick="saveSettings()">Save Changes</button>
+    <div style="text-align:center; margin-top: 15px;">
+      <a href="/" style="color: #666; text-decoration: none; font-size: 14px;">&larr; Back to Homepage</a>
+    </div>
+  </div>
+
+  <script>
+    // Simple Login
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === "admin" && p === "123456") {
+        document.getElementById("loginPanel").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadCurrentSettings();
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+
+    function loadCurrentSettings() {
+      const waLink = localStorage.getItem("admin_whatsapp_link");
+      if (waLink) {
+        document.getElementById("waNum").value = waLink.replace("https://wa.me/", "");
+      } else {
+        document.getElementById("waNum").value = "";
+      }
+      
+      const b1 = localStorage.getItem("admin_banner_1");
+      const b2 = localStorage.getItem("admin_banner_2");
+      if (b1) { document.getElementById("preview1").src = b1; document.getElementById("preview1").style.display = "block"; }
+      if (b2) { document.getElementById("preview2").src = b2; document.getElementById("preview2").style.display = "block"; }
+    }
+
+    function previewImage(input, previewId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById(previewId);
+          img.src = e.target.result;
+          img.style.display = "block";
+          // Clear URL input if file is uploaded
+          document.getElementById(input.id.replace('File', 'Url')).value = "";
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function updatePreviewUrl(input, previewId) {
+      if(input.value) {
+        const img = document.getElementById(previewId);
+        img.src = input.value;
+        img.style.display = "block";
+        // Clear file input if URL is provided
+        document.getElementById(input.id.replace('Url', 'File')).value = "";
+      }
+    }
+
+    function saveSettings() {
+      let waNum = document.getElementById("waNum").value.trim();
+      if (waNum) {
+        waNum = waNum.replace(/[^0-9]/g, ''); // keep only numbers
+        localStorage.setItem("admin_whatsapp_link", "https://wa.me/" + waNum);
+      } else {
+        localStorage.removeItem("admin_whatsapp_link");
+      }
+
+      // Save Banner 1
+      const p1 = document.getElementById("preview1").src;
+      if (p1 && p1 !== window.location.href && document.getElementById("preview1").style.display !== "none") {
+        localStorage.setItem("admin_banner_1", p1);
+      }
+
+      // Save Banner 2
+      const p2 = document.getElementById("preview2").src;
+      if (p2 && p2 !== window.location.href && document.getElementById("preview2").style.display !== "none") {
+        localStorage.setItem("admin_banner_2", p2);
+      }
+
+      const msg = document.getElementById("saveSuccess");
+      msg.style.display = "block";
+      setTimeout(() => msg.style.display = "none", 3000);
+    }
+  </script>
+</body>
+</html>

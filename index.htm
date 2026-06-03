@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+<!DOCTYPE html> 
 <html lang="en-in">
 <head>  
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1669,11 +1669,23 @@ Sabse Tezz Live Result Yahi Milega
   
   <!-- Image Banners Above WhatsApp Button -->
   <div style="display: flex; justify-content: center; gap: 10px; margin: 15px auto; flex-wrap: wrap;">
-    <img src="img/banner1.jpeg" alt="Bonus Offer" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 35%;">
-    <img src="img/banner2.jpeg" alt="Fast Results" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 35%;">
+    <img id="dynamicBanner1" src="img/banner1.jpeg" alt="Bonus Offer" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 35%;">
+    <img id="dynamicBanner2" src="img/banner2.jpeg" alt="Fast Results" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 35%;">
   </div>
 
-  <a target="_blank" href="https://wa.me/918790023843" rel="noopener noreferrer" style="color:#fff;border:2px solid #fff;padding:6px 0;display:block;width:230px;margin:6px auto;border-radius:15px;background:#25D366;text-decoration:none;font-weight:600;">📲 WhatsApp Us Now</a></div>
+  <a id="dynamicWhatsapp" target="_blank" href="https://wa.me/918790023843" rel="noopener noreferrer" style="color:#fff;border:2px solid #fff;padding:6px 0;display:block;width:230px;margin:6px auto;border-radius:15px;background:#25D366;text-decoration:none;font-weight:600;">📲 WhatsApp Us Now</a>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const savedWa = localStorage.getItem("admin_whatsapp_link");
+      const savedB1 = localStorage.getItem("admin_banner_1");
+      const savedB2 = localStorage.getItem("admin_banner_2");
+      if (savedWa) document.getElementById("dynamicWhatsapp").href = savedWa;
+      if (savedB1) document.getElementById("dynamicBanner1").src = savedB1;
+      if (savedB2) document.getElementById("dynamicBanner2").src = savedB2;
+    });
+  </script>
+</div>
 
 
 
