@@ -1677,8 +1677,8 @@ Sabse Tezz Live Result Yahi Milega
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob/019e8e65-73ad-76d9-89d0-58feb69ffdb0";
-      fetch(JSONBLOB_URL)
+      const GET_URL = "/api/getSettings";
+      fetch(GET_URL)
         .then(res => res.json())
         .then(data => {
           if (data.waNum) document.getElementById("dynamicWhatsapp").href = "https://wa.me/" + data.waNum;

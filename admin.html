@@ -82,10 +82,11 @@
       }
     }
 
-    const JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob/019e8e65-73ad-76d9-89d0-58feb69ffdb0";
+    const GET_URL = "/api/getSettings";
+    const SAVE_URL = "/api/saveSettings";
 
     function loadCurrentSettings() {
-      fetch(JSONBLOB_URL)
+      fetch(GET_URL)
         .then(res => res.json())
         .then(data => {
           document.getElementById("waNum").value = data.waNum || "";
@@ -150,7 +151,7 @@
       btn.innerText = "Saving...";
       btn.disabled = true;
 
-      fetch(JSONBLOB_URL, {
+      fetch(SAVE_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ waNum, banner1, banner2 })
