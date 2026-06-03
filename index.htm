@@ -1677,12 +1677,14 @@ Sabse Tezz Live Result Yahi Milega
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const savedWa = localStorage.getItem("admin_whatsapp_link");
-      const savedB1 = localStorage.getItem("admin_banner_1");
-      const savedB2 = localStorage.getItem("admin_banner_2");
-      if (savedWa) document.getElementById("dynamicWhatsapp").href = savedWa;
-      if (savedB1) document.getElementById("dynamicBanner1").src = savedB1;
-      if (savedB2) document.getElementById("dynamicBanner2").src = savedB2;
+      const JSONBLOB_URL = "https://jsonblob.com/api/jsonBlob/019e8e65-73ad-76d9-89d0-58feb69ffdb0";
+      fetch(JSONBLOB_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (data.waNum) document.getElementById("dynamicWhatsapp").href = "https://wa.me/" + data.waNum;
+          if (data.banner1) document.getElementById("dynamicBanner1").src = data.banner1;
+          if (data.banner2) document.getElementById("dynamicBanner2").src = data.banner2;
+        }).catch(err => console.error("Error loading settings:", err));
     });
   </script>
 </div>
