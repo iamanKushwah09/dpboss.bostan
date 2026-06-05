@@ -1,7 +1,7 @@
 const https = require('https');
 
 module.exports = function handler(req, res) {
-  https.get("https://jsonblob.com/api/jsonBlob/019e8e65-73ad-76d9-89d0-58feb69ffdb0", (response) => {
+  https.get("https://jsonblob.com/api/jsonBlob/019e96a6-30ee-769e-b2ee-8b7628680739", (response) => {
     let data = '';
     response.on('data', (chunk) => data += chunk);
     response.on('end', () => {
