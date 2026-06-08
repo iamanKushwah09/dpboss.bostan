@@ -3242,17 +3242,11 @@ function applyLiveData(html) {
 }
 
 async function fetchLiveWebsiteAsAPI() {
-    const gEl = document.getElementById('golden-ank-value');
-    const fEl = document.getElementById('final-ank-value');
-    if (gEl) { gEl.style.cssText='font-style:italic;color:#aaa;'; gEl.textContent='Syncing...'; }
-    if (fEl) { fEl.style.cssText='font-style:italic;color:#aaa;'; fEl.textContent='Syncing...'; }
     try {
         const html = await fetchWithFallback(APP_CONFIG.LIVE_SOURCE_URL);
         applyLiveData(html);
     } catch(e) {
         console.error('Fetch failed:', e.message);
-        if (gEl) { gEl.style.cssText='color:red;font-size:12px;'; gEl.textContent='Error - retry in 30s'; }
-        if (fEl) { fEl.style.cssText='color:red;font-size:12px;'; fEl.textContent='Error'; }
     }
 }
 
