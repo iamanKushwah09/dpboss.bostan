@@ -1,40 +1,22 @@
-const https = require('https');
+const { put } = require('@vercel/blob');
 
-module.exports = function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'PUT' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const data = JSON.stringify(req.body || {});
-
-  const options = {
-    hostname: 'jsonblob.com',
-    port: 443,
-    path: '/api/jsonBlob/019e96a6-30ee-769e-b2ee-8b7628680739',
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Content-Length': Buffer.byteLength(data)
-    }
-  };
-
-  const request = https.request(options, (response) => {
-    let responseData = '';
-    response.on('data', (chunk) => responseData += chunk);
-    response.on('end', () => {
-      try {
-        res.status(200).json(JSON.parse(responseData));
-      } catch (e) {
-        res.status(500).json({ error: "Invalid JSON response" });
-      }
+  try {
+    const data = JSON.stringify(req.body || {});
+    
+    // Save settings.json to Vercel Blob
+    const blob = await put('settings.json', data, {
+      access: 'public',
+      contentType: 'application/json',
+      addRandomSuffix: false // Overwrite the same file so we can easily retrieve it
     });
-  });
 
-  request.on('error', (error) => {
+    res.status(200).json({ success: true, url: blob.url });
+  } catch (error) {
     res.status(500).json({ error: error.message });
-  });
-
-  request.write(data);
-  request.end();
+  }
 };

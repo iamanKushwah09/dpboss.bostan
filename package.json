@@ -1,0 +1,24 @@
+{
+  "name": "dpbossss.boston",
+  "version": "1.0.0",
+  "description": "",
+  "main": "beacon.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamanKushwah09/dpboss.bostan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/iamanKushwah09/dpboss.bostan/issues"
+  },
+  "homepage": "https://github.com/iamanKushwah09/dpboss.bostan#readme",
+  "dependencies": {
+    "@vercel/blob": "^2.4.0"
+  }
+}

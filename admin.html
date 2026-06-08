@@ -140,30 +140,53 @@
       }
     }
 
-    function saveSettings() {
+    async function saveSettings() {
       let waNum = document.getElementById("waNum").value.trim().replace(/[^0-9]/g, '');
       const p1 = document.getElementById("preview1");
       const p2 = document.getElementById("preview2");
-      const banner1 = (p1.style.display !== "none" && p1.src !== window.location.href) ? p1.src : "";
-      const banner2 = (p2.style.display !== "none" && p2.src !== window.location.href) ? p2.src : "";
+      let banner1 = (p1.style.display !== "none" && p1.src !== window.location.href) ? p1.src : "";
+      let banner2 = (p2.style.display !== "none" && p2.src !== window.location.href) ? p2.src : "";
 
       const btn = document.querySelector("button[onclick='saveSettings()']");
       btn.innerText = "Saving...";
       btn.disabled = true;
 
-      fetch(SAVE_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ waNum, banner1, banner2 })
-      }).then(() => {
+      try {
+        if (banner1.startsWith('data:image')) {
+          const res = await fetch('/api/uploadImage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: banner1, filename: 'banner1.jpg' })
+          });
+          const data = await res.json();
+          if (data.url) banner1 = data.url;
+        }
+
+        if (banner2.startsWith('data:image')) {
+          const res = await fetch('/api/uploadImage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: banner2, filename: 'banner2.jpg' })
+          });
+          const data = await res.json();
+          if (data.url) banner2 = data.url;
+        }
+
+        await fetch(SAVE_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ waNum, banner1, banner2 })
+        });
+
         const msg = document.getElementById("saveSuccess");
         msg.style.display = "block";
         setTimeout(() => msg.style.display = "none", 3000);
-      }).catch(err => alert("Error: " + err))
-      .finally(() => {
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
         btn.innerText = "Save Changes";
         btn.disabled = false;
-      });
+      }
     }
   </script>
 </body>
