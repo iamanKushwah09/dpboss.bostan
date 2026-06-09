@@ -1,0 +1,62 @@
+<!DOCTYPE html> 
+<html lang="en-in">
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>VIP GAME | DPBOSS</title>
+<style>
+  body {
+    background-color: #fc9;
+    color: #000;
+    font-family: Helvetica, sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ff182c;
+    box-shadow: 0 0 20px 0 rgb(0 0 0 / 40%);
+  }
+  h2 {
+    color: #061699;
+    text-shadow: 1px 1px 2px #fff;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>VIP GAME</h2>
+  
+  <div style="display: flex; justify-content: center; gap: 10px; margin: 15px auto; flex-wrap: wrap;">
+    <img id="dynamicBanner1" src="img/banner1.jpeg" alt="Bonus Offer" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 45%;">
+    <img id="dynamicBanner2" src="img/banner2.jpeg" alt="Fast Results" style="max-width: 150px; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); width: 45%;">
+  </div>
+
+  <a id="dynamicWhatsapp" target="_blank" href="https://wa.me/918790023843" rel="noopener noreferrer" style="color:#fff;border:2px solid #fff;padding:10px 0;display:block;width:250px;margin:20px auto;border-radius:15px;background:#25D366;text-decoration:none;font-weight:600;font-size:18px;">📲 WhatsApp Us Now</a>
+  
+  <a href="index.htm" style="color:#001699; text-decoration:underline; display:inline-block; margin-top:20px; font-size:18px; text-shadow:1px 1px 2px #fff;">&larr; Back to Home</a>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const GET_URL = "/api/getSettings";
+      fetch(GET_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (data.waNum) document.getElementById("dynamicWhatsapp").href = "https://wa.me/" + data.waNum;
+          if (data.banner1) document.getElementById("dynamicBanner1").src = data.banner1;
+          if (data.banner2) document.getElementById("dynamicBanner2").src = data.banner2;
+        }).catch(err => console.error("Error loading settings:", err));
+    });
+  </script>
+</div>
+</body>
+</html>

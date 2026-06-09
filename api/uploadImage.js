@@ -19,7 +19,8 @@ module.exports = async function handler(req, res) {
 
     const blob = await put(filename || `banner-${Date.now()}.jpg`, buffer, {
       access: 'public',
-      contentType: type
+      contentType: type,
+      allowOverwrite: true
     });
 
     res.status(200).json({ url: blob.url });
