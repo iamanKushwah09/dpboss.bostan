@@ -12,7 +12,8 @@ module.exports = async function handler(req, res) {
     const blob = await put('settings.json', data, {
       access: 'public',
       contentType: 'application/json',
-      addRandomSuffix: false // Overwrite the same file so we can easily retrieve it
+      addRandomSuffix: false, // Overwrite the same file so we can easily retrieve it
+      allowOverwrite: true
     });
 
     res.status(200).json({ success: true, url: blob.url });
