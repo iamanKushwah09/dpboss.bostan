@@ -47,7 +47,7 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const GET_URL = "/api/getSettings";
+      const GET_URL = `/api/getSettings?t=${Date.now()}`;
       fetch(GET_URL)
         .then(res => res.json())
         .then(data => {

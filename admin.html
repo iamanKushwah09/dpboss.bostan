@@ -82,7 +82,7 @@
       }
     }
 
-    const GET_URL = "/api/getSettings";
+    const GET_URL = `/api/getSettings?t=${Date.now()}`;
     const SAVE_URL = "/api/saveSettings";
 
     function loadCurrentSettings() {
@@ -113,7 +113,7 @@
           else if (h > max) { w *= max / h; h = max; }
           canvas.width = w; canvas.height = h;
           canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-          callback(canvas.toDataURL("image/jpeg", 0.6));
+          callback(canvas.toDataURL(file.type || "image/jpeg", 0.8));
         };
         img.src = e.target.result;
       };
@@ -156,7 +156,7 @@
           const res = await fetch('/api/uploadImage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: banner1, filename: 'banner1.jpg' })
+            body: JSON.stringify({ imageBase64: banner1, filename: 'banner1' })
           });
           const data = await res.json();
           if (data.url) banner1 = data.url;
@@ -166,7 +166,7 @@
           const res = await fetch('/api/uploadImage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: banner2, filename: 'banner2.jpg' })
+            body: JSON.stringify({ imageBase64: banner2, filename: 'banner2' })
           });
           const data = await res.json();
           if (data.url) banner2 = data.url;

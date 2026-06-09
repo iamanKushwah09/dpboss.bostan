@@ -7,8 +7,10 @@ module.exports = async function handler(req, res) {
       // Fetch the file contents directly
       const response = await fetch(blobs[0].url, { cache: 'no-store' });
       const data = await response.json();
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
       res.status(200).json(data);
     } else {
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
       res.status(200).json({}); // No settings yet
     }
   } catch (error) {

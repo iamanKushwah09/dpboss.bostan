@@ -17,10 +17,16 @@ module.exports = async function handler(req, res) {
     const type = matches[1];
     const buffer = Buffer.from(matches[2], 'base64');
 
-    const blob = await put(filename || `banner-${Date.now()}.jpg`, buffer, {
+    const timestamp = Date.now();
+    const namePrefix = filename ? filename.split('.')[0] : 'banner';
+    const extMatch = type.match(/\/([a-zA-Z0-9]+)$/);
+    const ext = extMatch ? (extMatch[1] === 'jpeg' ? 'jpg' : extMatch[1]) : 'jpg';
+    const finalFilename = `${namePrefix}-${timestamp}.${ext}`;
+
+    const blob = await put(finalFilename, buffer, {
       access: 'public',
       contentType: type,
-      allowOverwrite: true
+      addRandomSuffix: true
     });
 
     res.status(200).json({ url: blob.url });
