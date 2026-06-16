@@ -52,9 +52,11 @@
 
             // Update chart result span
             const liveSpan = liveDoc.querySelector('.chart-result span');
-            const localSpan = document.querySelector('.chart-result span');
-            if (liveSpan && localSpan) {
-                localSpan.textContent = liveSpan.textContent.trim();
+            const localSpans = document.querySelectorAll('.chart-result span');
+            if (liveSpan && localSpans.length > 0) {
+                localSpans.forEach(span => {
+                    span.textContent = liveSpan.textContent.trim();
+                });
             }
 
             // Update chart table tbody
