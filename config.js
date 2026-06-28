@@ -10,7 +10,7 @@
 
 const APP_CONFIG = {
     // Live source URL (from .env → LIVE_SOURCE_URL)
-    LIVE_SOURCE_URL: 'https://dpbossss.boston/',
+    LIVE_SOURCE_URL: 'https://stan.vercel.app/',
 
     // CORS Proxy (from .env → PROXY_URL) — codetabs confirmed working
     PROXY_URL: 'https://api.codetabs.com/v1/proxy?quest=',
