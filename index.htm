@@ -10,6 +10,27 @@
 <meta name="author" content="DPBOSS | SATTA MATKA | KALYAN MATKA | MATKA RESULT | MATKA | SATTA">
 <link rel="canonical" href="https://dpbossss.boston" />
 <link rel="alternate" href="https://dpbossss.boston/" hreflang="en-in" />
+<style id="live-data-loader">
+  body::before {
+      content: "⏳ Fetching Live Result... Please wait.";
+      display: block;
+      background: #bb2833;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999999;
+  }
+  .tkt-val, .my-table, .oc-fg, .l-obj-giv, .aaj-pass, .sun-col, .lv-mc {
+      opacity: 0; /* Fully hide old data to avoid any flicker */
+      pointer-events: none;
+      transition: opacity 0.3s ease-in;
+  }
+</style>
 
 <meta name="google" content="notranslate" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,6 +51,8 @@
 <link rel="apple-touch-icon" sizes="114x114" href="/newfev/apple-icon-114x114.png">
 <link rel="apple-touch-icon" sizes="120x120" href="/newfev/apple-icon-120x120.png">
 <link rel="icon" type="image/png" sizes="96x96" href="/newfev/favicon-96x96.png">
+<link rel="shortcut icon" href="/fav/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/fav/favicon.ico" type="image/x-icon">
 
 
 <meta name="google-site-verification" content="y6q_7oL3UTt50BeVm2tVZESV2rf7xQYtX971_uULdOM" />
@@ -3040,21 +3063,26 @@ const PROXY_LIST = [
 ];
 
 async function fetchWithFallback(targetUrl) {
-    for (let i = 0; i < PROXY_LIST.length; i++) {
-        const proxyUrl = PROXY_LIST[i](targetUrl);
-        try {
-            console.log(`[Proxy ${i+1}] Trying...`);
-            const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
-            if (!res.ok) { console.warn(`[Proxy ${i+1}] HTTP ${res.status}`); continue; }
-            const text = await res.text();
-            if (!text || text.length < 5000) { console.warn(`[Proxy ${i+1}] Too short: ${text.length}`); continue; }
-            console.log(`[Proxy ${i+1}] Success: ${text.length} chars`);
-            return text;
-        } catch(e) {
-            console.warn(`[Proxy ${i+1}] Failed:`, e.message);
-        }
+    const promises = PROXY_LIST.map((proxyFn, i) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const proxyUrl = proxyFn(targetUrl);
+                const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const text = await res.text();
+                if (!text || text.length < 5000) throw new Error(`Too short`);
+                console.log(`[Proxy ${i+1}] Success!`);
+                resolve(text);
+            } catch(e) {
+                reject(e);
+            }
+        });
+    });
+    try {
+        return await Promise.any(promises);
+    } catch (e) {
+        throw new Error('All proxies failed');
     }
-    throw new Error('All proxies failed');
 }
 
 function fixLinks(container) {
@@ -3223,12 +3251,23 @@ function applyLiveData(html) {
     console.log('All live data synced at', new Date().toLocaleTimeString());
 }
 
+function removeLoaderAndShowData() {
+    const loaderStyle = document.getElementById('live-data-loader');
+    if (loaderStyle) loaderStyle.remove();
+    document.querySelectorAll('.tkt-val, .my-table, .oc-fg, .l-obj-giv, .aaj-pass, .sun-col, .lv-mc').forEach(el => {
+        el.style.opacity = '1';
+        el.style.pointerEvents = 'auto';
+    });
+}
+
 async function fetchLiveWebsiteAsAPI() {
     try {
         const html = await fetchWithFallback(APP_CONFIG.LIVE_SOURCE_URL);
         applyLiveData(html);
+        removeLoaderAndShowData();
     } catch(e) {
         console.error('Fetch failed:', e.message);
+        removeLoaderAndShowData();
     }
 }
 
