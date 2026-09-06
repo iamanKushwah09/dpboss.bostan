@@ -10,27 +10,85 @@
 <meta name="author" content="DPBOSS | SATTA MATKA | KALYAN MATKA | MATKA RESULT | MATKA | SATTA">
 <link rel="canonical" href="https://dpbossss.boston" />
 <link rel="alternate" href="https://dpbossss.boston/" hreflang="en-in" />
+<!-- DNS Prefetch & Preconnect for fast proxy resolution -->
+<link rel="dns-prefetch" href="//corsproxy.io">
+<link rel="dns-prefetch" href="//api.codetabs.com">
+<link rel="dns-prefetch" href="//api.allorigins.win">
+<link rel="preconnect" href="//corsproxy.io" crossorigin>
+<link rel="preconnect" href="//api.codetabs.com" crossorigin>
 <style id="live-data-loader">
+  /* Non-blocking update indicator — does NOT hide any content */
   body::before {
-      content: "⏳ Fetching Live Result... Please wait.";
+      content: "⚡ Updating Live Results...";
       display: block;
-      background: #bb2833;
+      background: linear-gradient(90deg, #bb2833, #d63447);
       color: white;
       text-align: center;
-      padding: 10px;
+      padding: 4px 10px;
       font-weight: bold;
+      font-size: 12px;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       z-index: 999999;
+      animation: dpboss-pulse 1.5s ease-in-out infinite;
   }
-  .tkt-val, .my-table, .oc-fg, .l-obj-giv, .aaj-pass, .sun-col, .lv-mc {
-      opacity: 0; /* Fully hide old data to avoid any flicker */
-      pointer-events: none;
-      transition: opacity 0.3s ease-in;
+  @keyframes dpboss-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
   }
 </style>
+
+<!-- EARLY FETCH: Start loading live data IMMEDIATELY in <head> -->
+<!-- Strategy: Cache first (0ms) → Early network fetch (background) -->
+<script>
+// STEP 1: Check localStorage cache FIRST — instant data for returning users
+var __DPBOSS_CACHED_HTML__ = null;
+var __DPBOSS_CACHE_AGE__ = Infinity;
+try {
+    var _c = localStorage.getItem('dpboss_live_cache');
+    var _t = parseInt(localStorage.getItem('dpboss_live_cache_ts') || '0');
+    if (_c && _c.length > 5000) {
+        __DPBOSS_CACHED_HTML__ = _c;
+        __DPBOSS_CACHE_AGE__ = Date.now() - _t;
+        console.log('[Cache] Found cached data, age: ' + Math.round(__DPBOSS_CACHE_AGE__/1000) + 's');
+    }
+} catch(e) {}
+
+// STEP 2: Start network fetch in parallel (for fresh data)
+var __DPBOSS_EARLY_FETCH__ = (function() {
+    var LIVE_URL = 'https://dpbossss.boston/';
+    var PROXY_LIST = [
+        function(u) { return '/api/fetchLive?url=' + encodeURIComponent(u); },
+        function(u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); },
+        function(u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+        function(u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+        function(u) { return 'https://thingproxy.freeboard.io/fetch/' + u; }
+    ];
+
+    var promises = PROXY_LIST.map(function(proxyFn, i) {
+        return new Promise(function(resolve, reject) {
+            var proxyUrl = proxyFn(LIVE_URL);
+            fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(5000) })
+                .then(function(res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(function(text) {
+                    if (!text || text.length < 5000) throw new Error('Too short');
+                    console.log('[Early Fetch] Proxy ' + (i+1) + ' succeeded!');
+                    resolve(text);
+                })
+                .catch(function(e) {
+                    reject(e);
+                });
+        });
+    });
+
+    return Promise.any(promises).catch(function() { return null; });
+})();
+</script>
 
 <meta name="google" content="notranslate" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -3053,21 +3111,29 @@ window.addEventListener('load', function() {
 <!-- Load config from .env bridge file -->
 <script src="config.js"></script>
 <script>
-// Multiple proxies tried in order - codetabs confirmed working
-const PROXY_LIST = [
+// ============================================================
+// ULTRA-FAST LIVE DATA FETCHING — Production Level v2
+// ============================================================
+// Strategy (3-tier, fastest wins):
+//   1. localStorage cache → INSTANT (0ms) — show last known data immediately
+//   2. Early fetch from <head> → already in-flight while body parsed
+//   3. Fresh network fetch → background refresh with latest data
+// ============================================================
+
+const PROXY_LIST_MAIN = [
+    (url) => `/api/fetchLive?url=${encodeURIComponent(url)}`,
     (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
     (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://cors.eu.org/${url}`,
     (url) => `https://thingproxy.freeboard.io/fetch/${url}`
 ];
 
 async function fetchWithFallback(targetUrl) {
-    const promises = PROXY_LIST.map((proxyFn, i) => {
+    const promises = PROXY_LIST_MAIN.map((proxyFn, i) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const proxyUrl = proxyFn(targetUrl);
-                const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+                const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const text = await res.text();
                 if (!text || text.length < 5000) throw new Error(`Too short`);
@@ -3085,10 +3151,26 @@ async function fetchWithFallback(targetUrl) {
     }
 }
 
+// Save HTML to localStorage for instant loading next time
+function saveToCache(html) {
+    try {
+        localStorage.setItem('dpboss_live_cache', html);
+        localStorage.setItem('dpboss_live_cache_ts', String(Date.now()));
+    } catch(e) {
+        // localStorage full — clear old cache and retry
+        try {
+            localStorage.removeItem('dpboss_live_cache');
+            localStorage.removeItem('dpboss_live_cache_ts');
+            localStorage.setItem('dpboss_live_cache', html);
+            localStorage.setItem('dpboss_live_cache_ts', String(Date.now()));
+        } catch(e2) {}
+    }
+}
+
 function fixLinks(container) {
     container.querySelectorAll('a[href]').forEach(a => {
         const h = a.getAttribute('href');
-        if (h && h.includes('.php.html') && !h.includes('.php.html')) {
+        if (h && h.includes('.php') && !h.includes('.php.html')) {
             a.setAttribute('href', h.replace(/\.php(?!\.html)/g, '.php.html'));
         }
     });
@@ -3104,7 +3186,6 @@ function applyLiveData(html) {
     if (liveGA && localGA && liveGA.textContent.trim()) {
         localGA.style.cssText = 'font-weight:bold;';
         localGA.textContent = liveGA.textContent.trim();
-        console.log('Golden Ank:', liveGA.textContent.trim());
     }
 
     // 2. FINAL ANK
@@ -3113,33 +3194,22 @@ function applyLiveData(html) {
     if (liveFA && localFA && liveFA.innerHTML.trim()) {
         localFA.style.cssText = '';
         localFA.innerHTML = liveFA.innerHTML;
-        console.log('Final Ank updated');
     }
 
-    // 3. MARKET RESULTS — each h4's IMMEDIATE parentElement has h4 + span + p
-    // IMPORTANT: Multiple markets share one .tkt-val div, so we MUST use
-    // h4.parentElement (the per-market wrapper div), NOT h4.closest('.tkt-val')
+    // 3. MARKET RESULTS
     const liveMarkets = new Map();
     liveDoc.querySelectorAll('.tkt-val h4').forEach(h4 => {
         const name = h4.textContent.trim().toUpperCase();
-        // parentElement = the immediate div wrapping THIS market's h4 + span + p
         const marketDiv = h4.parentElement;
         if (marketDiv) liveMarkets.set(name, marketDiv);
     });
 
-    console.log(`Live markets found: ${liveMarkets.size}`);
-
-    let matched = 0, notFound = [];
+    let matched = 0;
     document.querySelectorAll('.tkt-val h4').forEach(localH4 => {
         const name = localH4.textContent.trim().toUpperCase();
         const liveMarketDiv = liveMarkets.get(name);
+        if (!liveMarketDiv) return;
 
-        if (!liveMarketDiv) {
-            notFound.push(name);
-            return;
-        }
-
-        // Span and p are siblings of h4 inside the same immediate parent div
         const liveSpan = liveMarketDiv.querySelector('span');
         const localSpan = localH4.parentElement?.querySelector('span');
         if (liveSpan && localSpan) {
@@ -3152,8 +3222,7 @@ function applyLiveData(html) {
         if (liveP && localP) localP.innerHTML = liveP.innerHTML;
     });
 
-    console.log(`Markets updated: ${matched}/${document.querySelectorAll('.tkt-val h4').length}`);
-    if (notFound.length) console.warn('Markets not on live site:', notFound);
+    console.log(`Markets synced: ${matched}`);
 
     // 4. AAJ KYA PASS HUA
     const liveAaj = liveDoc.querySelector('.aaj-pass');
@@ -3171,48 +3240,41 @@ function applyLiveData(html) {
     if (liveLiveResult && localLiveResult) {
         localLiveResult.innerHTML = liveLiveResult.innerHTML;
         fixLinks(localLiveResult);
-        console.log('Live Results updated');
     }
 
-    // 7. DYNAMICALLY SYNC ALL TABLES (STARLINES, BAZARS, etc.)
+    // 7. ALL TABLES (STARLINES, BAZARS, etc.) — pre-index for O(1) lookup
+    const liveTablesMap = new Map();
+    liveDoc.querySelectorAll('.my-table').forEach(el => {
+        const h4 = el.querySelector('h4');
+        const p = el.querySelector('p');
+        let id = '';
+        if (h4) id = h4.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
+        else if (p) id = p.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
+        if (id) liveTablesMap.set(id, el);
+    });
+
     document.querySelectorAll('.my-table').forEach(localTable => {
         const h4 = localTable.querySelector('h4');
+        const p = localTable.querySelector('p');
         let identifier = '';
-        if (h4) {
-            identifier = h4.textContent.trim().replace(/\s+/g, ' ').toUpperCase();
-        } else {
-            const p = localTable.querySelector('p');
-            if (p) {
-                identifier = p.textContent.trim().replace(/\s+/g, ' ').toUpperCase();
-            }
-        }
-
-        // Clean out any chart button text from identifier if present
-        identifier = identifier.replace('CHART', '').trim();
-
+        if (h4) identifier = h4.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
+        else if (p) identifier = p.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
         if (!identifier) return;
 
-        const liveTable = Array.from(liveDoc.querySelectorAll('.my-table')).find(el => {
-            const liveH4 = el.querySelector('h4');
-            if (liveH4) {
-                const liveH4Text = liveH4.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
-                return liveH4Text.includes(identifier) || identifier.includes(liveH4Text);
+        // O(1) exact match first, then fuzzy fallback
+        let liveTable = liveTablesMap.get(identifier);
+        if (!liveTable) {
+            for (const [key, el] of liveTablesMap) {
+                if (key.includes(identifier) || identifier.includes(key)) {
+                    liveTable = el;
+                    break;
+                }
             }
-            const liveP = el.querySelector('p');
-            if (liveP) {
-                const livePText = liveP.textContent.trim().replace(/\s+/g, ' ').toUpperCase().replace('CHART', '').trim();
-                return livePText.includes(identifier) || identifier.includes(livePText);
-            }
-            return false;
-        });
+        }
 
         if (liveTable) {
             localTable.innerHTML = liveTable.innerHTML;
             fixLinks(localTable);
-            console.log(`Updated table: ${identifier}`);
-        } else {
-            console.warn(`Table not found on live site: ${identifier}`); 
-            
         }
     });
 
@@ -3222,57 +3284,96 @@ function applyLiveData(html) {
     if (liveOcFg && localOcFg) {
         localOcFg.innerHTML = liveOcFg.innerHTML;
         fixLinks(localOcFg);
-        console.log('FREE GAME ZONE updated');
     }
 
-    // 9. L-OBJ-GIV TABLES (कल्याण & KALYAN NIGHT / MAIN BAZAR)
+    // 9. L-OBJ-GIV TABLES
+    const liveObjMap = new Map();
+    liveDoc.querySelectorAll('.l-obj-giv').forEach(el => {
+        const t = el.querySelector('.v5a25');
+        if (t) liveObjMap.set(t.textContent.trim().toUpperCase(), el);
+    });
+
     document.querySelectorAll('.l-obj-giv').forEach(localTable => {
         const titleEl = localTable.querySelector('.v5a25');
         if (!titleEl) return;
         const title = titleEl.textContent.trim().toUpperCase();
 
-        const liveTable = Array.from(liveDoc.querySelectorAll('.l-obj-giv')).find(el => {
-            const liveTitleEl = el.querySelector('.v5a25');
-            if (liveTitleEl) {
-                const liveTitle = liveTitleEl.textContent.trim().toUpperCase();
-                return liveTitle === title || liveTitle.includes(title) || title.includes(liveTitle);
+        let liveTable = liveObjMap.get(title);
+        if (!liveTable) {
+            for (const [key, el] of liveObjMap) {
+                if (key.includes(title) || title.includes(key)) {
+                    liveTable = el;
+                    break;
+                }
             }
-            return false;
-        });
-
-        if (liveTable) {
-            localTable.innerHTML = liveTable.innerHTML;
-            console.log(`Updated l-obj-giv table: ${title}`);
-        } else {
-            console.warn(`l-obj-giv table not found on live site: ${title}`);
         }
+
+        if (liveTable) localTable.innerHTML = liveTable.innerHTML;
     });
 
-    console.log('All live data synced at', new Date().toLocaleTimeString());
+    console.log('[Sync] All data applied at', new Date().toLocaleTimeString());
 }
 
-function removeLoaderAndShowData() {
+function removeLoader() {
     const loaderStyle = document.getElementById('live-data-loader');
     if (loaderStyle) loaderStyle.remove();
-    document.querySelectorAll('.tkt-val, .my-table, .oc-fg, .l-obj-giv, .aaj-pass, .sun-col, .lv-mc').forEach(el => {
-        el.style.opacity = '1';
-        el.style.pointerEvents = 'auto';
-    });
 }
 
-async function fetchLiveWebsiteAsAPI() {
+// ============================================================
+// MAIN EXECUTION — 3-tier loading strategy
+// ============================================================
+(async function() {
+    const CACHE_MAX_AGE = 120000; // 2 minutes
+    let cacheUsed = false;
+
+    // TIER 1: localStorage cache — INSTANT (0ms)
+    if (typeof __DPBOSS_CACHED_HTML__ !== 'undefined' && __DPBOSS_CACHED_HTML__ && __DPBOSS_CACHE_AGE__ < CACHE_MAX_AGE) {
+        console.log('[TIER 1] Applying cached data — INSTANT!');
+        try {
+            applyLiveData(__DPBOSS_CACHED_HTML__);
+            removeLoader();
+            cacheUsed = true;
+        } catch(e) {
+            console.warn('[TIER 1] Cache apply failed:', e.message);
+        }
+        __DPBOSS_CACHED_HTML__ = null;
+    }
+
+    // TIER 2 & 3: Network fetch (early fetch or fresh)
+    try {
+        let html = null;
+        if (typeof __DPBOSS_EARLY_FETCH__ !== 'undefined' && __DPBOSS_EARLY_FETCH__) {
+            html = await __DPBOSS_EARLY_FETCH__;
+            __DPBOSS_EARLY_FETCH__ = null;
+            if (html) console.log('[TIER 2] Got early-fetched data!');
+        }
+        if (!html) {
+            console.log('[TIER 3] Fetching fresh data...');
+            html = await fetchWithFallback(APP_CONFIG.LIVE_SOURCE_URL);
+        }
+        if (html) {
+            applyLiveData(html);
+            saveToCache(html);
+            removeLoader();
+        }
+    } catch(e) {
+        console.error('[Fetch] All tiers failed:', e.message);
+        removeLoader();
+    }
+})();
+
+// Auto-refresh every 30 seconds
+setInterval(async function() {
     try {
         const html = await fetchWithFallback(APP_CONFIG.LIVE_SOURCE_URL);
-        applyLiveData(html);
-        removeLoaderAndShowData();
+        if (html) {
+            applyLiveData(html);
+            saveToCache(html);
+        }
     } catch(e) {
-        console.error('Fetch failed:', e.message);
-        removeLoaderAndShowData();
+        console.warn('[Refresh] Failed:', e.message);
     }
-}
-
-fetchLiveWebsiteAsAPI();
-setInterval(fetchLiveWebsiteAsAPI, APP_CONFIG.REFRESH_INTERVAL);
+}, APP_CONFIG.REFRESH_INTERVAL);
 </script>
 </body>
 </html> 

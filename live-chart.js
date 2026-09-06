@@ -14,7 +14,6 @@
         (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
         (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
         (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        (url) => `https://cors.eu.org/${url}`,
         (url) => `https://thingproxy.freeboard.io/fetch/${url}`
     ];
 
@@ -22,7 +21,7 @@
         for (let i = 0; i < PROXY_LIST.length; i++) {
             const proxyUrl = PROXY_LIST[i](targetUrl);
             try {
-                const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+                const res = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
                 if (!res.ok) continue;
                 const text = await res.text();
                 if (!text || text.length < 5000) continue;
